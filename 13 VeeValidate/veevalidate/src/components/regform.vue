@@ -32,6 +32,16 @@
           <span v-if="passwordError && passwordMeta.dirty" class="error">{{ passwordError }}</span>
         </div>
 
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input 
+              v-model="agreement" 
+              type="checkbox" 
+            />
+            <span>I agree with license agreement</span>
+          </label>
+        </div>
+
         <button :disabled="!meta.valid" type="submit" class="submit-btn">
           Зарегистрироваться
         </button>
@@ -50,19 +60,23 @@ const schema = yup.object({
     .email('Введите корректный email адрес'),
   password: yup.string()
     .required('Пароль обязателен')
-    .min(8, 'Пароль должен содержать не менее 8 символов')
+    .min(8, 'Пароль должен содержать не менее 8 символов'),
+  agreement: yup.boolean()
+    .oneOf([true], 'Необходимо согласиться с условиями')
 });
 
 const { handleSubmit, meta } = useForm({
   validationSchema: schema,
   initialValues: {
     email: '',
-    password: ''
+    password: '',
+    agreement: false
   }
 });
 
 const { value: email, errorMessage: emailError, meta: emailMeta } = useField('email');
 const { value: password, errorMessage: passwordError, meta: passwordMeta } = useField('password');
+const { value: agreement } = useField('agreement');
 
 const onSubmit = handleSubmit((values) => {
   alert('Успех! Данные отправлены: ' + JSON.stringify(values));
@@ -130,7 +144,8 @@ label {
   font-weight: 500;
 }
 
-input {
+input[type="text"],
+input[type="password"] {
   padding: 12px 15px;
   font-size: 14px;
   border: 1px solid #cfcfcf;
@@ -139,31 +154,51 @@ input {
   outline: none;
 }
 
-input:focus {
+input[type="text"]:focus,
+input[type="password"]:focus {
   border-color: #3085d6;
   box-shadow: 0 0 5px rgba(48, 133, 214, 0.3);
 }
 
 input.is-invalid {
-  border-color: #d9534f;
+  border-color: #d9534f !important;
 }
 
 input.is-invalid:focus {
-  box-shadow: 0 0 5px rgba(217, 83, 79, 0.3);
+  box-shadow: 0 0 5px rgba(217, 83, 79, 0.3) !important;
 }
 
 input.is-valid {
-  border-color: #28a745;
+  border-color: #28a745 !important;
 }
 
 input.is-valid:focus {
-  box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.3) !important;
 }
 
 .error {
   color: #d9534f;
   font-size: 13px;
   margin-top: 5px;
+}
+
+.checkbox-group {
+  margin-bottom: 25px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
 .submit-btn {
