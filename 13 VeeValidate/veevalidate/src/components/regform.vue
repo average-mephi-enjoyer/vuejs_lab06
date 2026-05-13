@@ -10,8 +10,12 @@
             v-model="email" 
             type="text" 
             placeholder="Введите email"
+            :class="{ 
+              'is-invalid': emailError && emailMeta.dirty, 
+              'is-valid': emailMeta.valid && emailMeta.dirty 
+            }"
           />
-          <span v-if="emailError" class="error">{{ emailError }}</span>
+          <span v-if="emailError && emailMeta.dirty" class="error">{{ emailError }}</span>
         </div>
 
         <div class="form-group">
@@ -20,8 +24,12 @@
             v-model="password" 
             type="password" 
             placeholder="Введите пароль"
+            :class="{ 
+              'is-invalid': passwordError && passwordMeta.dirty, 
+              'is-valid': passwordMeta.valid && passwordMeta.dirty 
+            }"
           />
-          <span v-if="passwordError" class="error">{{ passwordError }}</span>
+          <span v-if="passwordError && passwordMeta.dirty" class="error">{{ passwordError }}</span>
         </div>
 
         <button :disabled="!meta.valid" type="submit" class="submit-btn">
@@ -53,8 +61,8 @@ const { handleSubmit, meta } = useForm({
   }
 });
 
-const { value: email, errorMessage: emailError } = useField('email');
-const { value: password, errorMessage: passwordError } = useField('password');
+const { value: email, errorMessage: emailError, meta: emailMeta } = useField('email');
+const { value: password, errorMessage: passwordError, meta: passwordMeta } = useField('password');
 
 const onSubmit = handleSubmit((values) => {
   alert('Успех! Данные отправлены: ' + JSON.stringify(values));
@@ -134,6 +142,22 @@ input {
 input:focus {
   border-color: #3085d6;
   box-shadow: 0 0 5px rgba(48, 133, 214, 0.3);
+}
+
+input.is-invalid {
+  border-color: #d9534f;
+}
+
+input.is-invalid:focus {
+  box-shadow: 0 0 5px rgba(217, 83, 79, 0.3);
+}
+
+input.is-valid {
+  border-color: #28a745;
+}
+
+input.is-valid:focus {
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
 }
 
 .error {
