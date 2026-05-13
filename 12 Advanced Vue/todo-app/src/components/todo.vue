@@ -1,10 +1,19 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const newTask = ref('')
-const tasks = ref([
-  { id: 1, text: 'My first task', completed: false },
-])
+const tasks = ref([])
+
+onMounted(() => {
+  const savedTasks = localStorage.getItem('todo-tasks')
+  if (savedTasks) {
+    tasks.value = JSON.parse(savedTasks)
+  }
+})
+
+watch(tasks, (newTasks) => {
+  localStorage.setItem('todo-tasks', JSON.stringify(newTasks))
+}, { deep: true })
 
 const addTask = () => {
   if (newTask.value.trim() === '') return
@@ -45,6 +54,8 @@ const removeTask = (id) => {
         <button @click="removeTask(task.id)" class="delete-btn">🗑</button>
       </li>
     </ul>
+    
+    <p v-if="tasks.length === 0" class="empty-state">Empty ToDo list</p>
   </div>
 </template>
 
@@ -54,6 +65,10 @@ const removeTask = (id) => {
   margin: 40px auto;
   font-family: sans-serif;
   color: #333;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 .input-section {
   display: flex;
@@ -73,6 +88,10 @@ const removeTask = (id) => {
   border-radius: 4px;
   padding: 0 15px;
   cursor: pointer;
+  transition: background 0.2s;
+}
+.add-btn:hover {
+  background-color: #357ABD;
 }
 .task-list {
   list-style: none;
@@ -86,6 +105,10 @@ const removeTask = (id) => {
   border: 1px solid #eee;
   margin-bottom: 5px;
   border-radius: 4px;
+  transition: all 0.2s;
+}
+.task-item:hover {
+  background-color: #f9f9f9;
 }
 .done {
   text-decoration: line-through;
@@ -97,5 +120,10 @@ const removeTask = (id) => {
   color: #d9534f;
   cursor: pointer;
   font-size: 16px;
+}
+.empty-state {
+  text-align: center;
+  color: #888;
+  margin-top: 20px;
 }
 </style>
