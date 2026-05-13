@@ -29,7 +29,24 @@
               'is-valid': passwordMeta.valid && passwordMeta.dirty 
             }"
           />
-          <span v-if="passwordError && passwordMeta.dirty" class="error">{{ passwordError }}</span>
+          
+          <ul v-if="passwordMeta.dirty" class="password-criteria">
+            <li :class="{ 'criteria-met': password.length >= 8, 'criteria-unmet': password.length < 8 }">
+              -> Длина не менее 8
+            </li>
+            <li :class="{ 'criteria-met': /[0-9]/.test(password), 'criteria-unmet': !/[0-9]/.test(password) }">
+              -> Цифры
+            </li>
+            <li :class="{ 'criteria-met': /[a-zа-яё]/.test(password), 'criteria-unmet': !/[a-zа-яё]/.test(password) }">
+              -> Буквы нижнего регистра
+            </li>
+            <li :class="{ 'criteria-met': /[A-ZА-ЯЁ]/.test(password), 'criteria-unmet': !/[A-ZА-ЯЁ]/.test(password) }">
+              -> Буквы верхнего регистра
+            </li>
+            <li :class="{ 'criteria-met': /[^a-zA-Zа-яА-ЯёЁ0-9\s]/.test(password), 'criteria-unmet': !/[^a-zA-Zа-яА-ЯёЁ0-9\s]/.test(password) }">
+              -> Спецсимволы
+            </li>
+          </ul>
         </div>
 
         <div class="form-group checkbox-group">
@@ -60,13 +77,13 @@ const schema = yup.object({
     .email('Введите корректный email адрес'),
   password: yup.string()
     .required('Пароль обязателен')
-    .min(8, 'Пароль должен содержать не менее 8 символов')
-    .matches(/[0-9]/, 'Пароль должен содержать хотя бы одну цифру')
-    .matches(/[a-zа-яё]/, 'Пароль должен содержать строчные буквы')
-    .matches(/[A-ZА-ЯЁ]/, 'Пароль должен содержать заглавные буквы')
-    .matches(/[^a-zA-Zа-яА-ЯёЁ0-9\s]/, 'Пароль должен содержать спецсимволы'),
+    .min(8)
+    .matches(/[0-9]/)
+    .matches(/[a-zа-яё]/)
+    .matches(/[A-ZА-ЯЁ]/)
+    .matches(/[^a-zA-Zа-яА-ЯёЁ0-9\s]/),
   agreement: yup.boolean()
-    .oneOf([true], 'Необходимо согласиться с условиями')
+    .oneOf([true])
 });
 
 const { handleSubmit, meta } = useForm({
@@ -184,6 +201,26 @@ input.is-valid:focus {
   color: #d9534f;
   font-size: 13px;
   margin-top: 5px;
+}
+
+.password-criteria {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+  font-size: 13px;
+}
+
+.password-criteria li {
+  margin-bottom: 4px;
+  transition: color 0.3s ease;
+}
+
+.criteria-met {
+  color: #28a745;
+}
+
+.criteria-unmet {
+  color: #d9534f;
 }
 
 .checkbox-group {
