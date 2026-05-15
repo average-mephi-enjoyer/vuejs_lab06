@@ -1,25 +1,16 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useTodoStore } from '../stores/todo'
 
 const newTaskTitle = ref('')
 const router = useRouter()
+const store = useTodoStore()
 
-const addTask = () => {
+const handleAddTask = () => {
   if (!newTaskTitle.value.trim()) return
-
-  const savedTasks = localStorage.getItem('todo-tasks')
-  const tasks = savedTasks ? JSON.parse(savedTasks) : []
-
-  const newId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1
-
-  tasks.push({
-    id: newId,
-    title: newTaskTitle.value,
-    completed: false
-  })
-
-  localStorage.setItem('todo-tasks', JSON.stringify(tasks))
+  
+  store.addTask(newTaskTitle.value)
   
   router.push('/')
 }
@@ -30,11 +21,11 @@ const addTask = () => {
     <h2>Добавление задачи</h2>
     <input 
       v-model="newTaskTitle" 
-      @keyup.enter="addTask" 
+      @keyup.enter="handleAddTask" 
       type="text" 
       placeholder="Название задачи..." 
       style="padding: 8px; width: 70%;"
     />
-    <button @click="addTask" style="padding: 8px 15px; margin-left: 10px;">Добавить</button>
+    <button @click="handleAddTask" style="padding: 8px 15px; margin-left: 10px;">Добавить</button>
   </div>
 </template>

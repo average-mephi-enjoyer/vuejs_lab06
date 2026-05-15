@@ -1,14 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useTodoStore } from '../stores/todo'
 
 const route = useRoute()
-const task = ref(null)
+const store = useTodoStore()
 
-onMounted(() => {
-  const savedTasks = JSON.parse(localStorage.getItem('todo-tasks') || '[]')
-  task.value = savedTasks.find(t => t.id === Number(route.params.id))
-})
+const task = computed(() => store.tasks.find(t => t.id === Number(route.params.id)))
 </script>
 
 <template>
@@ -20,7 +18,7 @@ onMounted(() => {
     </div>
     <div v-else>
       <h2>Ошибка</h2>
-      <p>Задача с таким ID не найдена.</p>
+      <p>Задача не найдена.</p>
     </div>
     <router-link to="/">Вернуться назад</router-link>
   </div>

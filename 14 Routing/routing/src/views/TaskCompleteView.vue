@@ -1,18 +1,15 @@
 <script setup>
 import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useTodoStore } from '../stores/todo'
 
 const route = useRoute()
+const router = useRouter()
+const store = useTodoStore()
 
 onMounted(() => {
   const taskId = Number(route.params.id)
-  const savedTasks = JSON.parse(localStorage.getItem('todo-tasks') || '[]')
-  
-  const taskIndex = savedTasks.findIndex(t => t.id === taskId)
-  if (taskIndex !== -1) {
-    savedTasks[taskIndex].completed = !savedTasks[taskIndex].completed
-    localStorage.setItem('todo-tasks', JSON.stringify(savedTasks))
-  }
+  store.toggleTaskStatus(taskId)
 })
 </script>
 

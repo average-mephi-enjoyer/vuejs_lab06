@@ -1,21 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-
-const tasks = ref([])
-
-onMounted(() => {
-  const savedTasks = localStorage.getItem('todo-tasks')
-  if (savedTasks) {
-    tasks.value = JSON.parse(savedTasks)
-  }
-})
+import { useTodoStore } from '../stores/todo'
+const store = useTodoStore()
 </script>
 
 <template>
   <div>
     <h2>Все задачи</h2>
-    <ul v-if="tasks.length > 0">
-      <li v-for="task in tasks" :key="task.id" style="margin-bottom: 15px;">
+    <ul v-if="store.tasks.length > 0">
+      <li v-for="task in store.tasks" :key="task.id" style="margin-bottom: 15px;">
         <strong>[{{ task.completed ? 'Выполнено' : 'В процессе' }}]</strong> {{ task.title }}
         
         <div style="margin-top: 5px; font-size: 0.9em;">
